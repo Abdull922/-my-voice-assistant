@@ -7,10 +7,25 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
-  <title>مساعدي الصوتي</title>
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  >
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  >
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="مساعدي AI"
+  >
+
+  <title>مساعدي AI</title>
 
 
   <style>
@@ -19,11 +34,17 @@
       box-sizing: border-box;
     }
 
+
+    html,
     body {
 
       margin: 0;
 
-      padding: 20px;
+      padding: 0;
+
+      width: 100%;
+
+      height: 100%;
 
       background: #f2f2f7;
 
@@ -34,110 +55,327 @@
         Arial,
         sans-serif;
 
+    }
+
+
+    body {
+
+      overflow: hidden;
+
+    }
+
+
+    .app {
+
+      height: 100dvh;
+
+      display: flex;
+
+      flex-direction: column;
+
+      max-width: 700px;
+
+      margin: auto;
+
+      background: #f2f2f7;
+
+    }
+
+
+    /* ============================
+       الرأس
+       ============================ */
+
+    header {
+
+      background: #111827;
+
+      color: white;
+
+      padding:
+        calc(15px + env(safe-area-inset-top))
+        18px
+        15px
+        18px;
+
       text-align: center;
 
-      color: #111827;
     }
 
 
-    h1 {
+    header h1 {
 
-      margin-top: 25px;
+      margin: 0;
 
-      font-size: 25px;
+      font-size: 21px;
+
     }
 
 
-    #mic {
+    #status {
 
-      width: 100px;
+      margin-top: 5px;
 
-      height: 100px;
+      font-size: 12px;
 
-      border-radius: 50%;
+      opacity: .7;
 
-      border: none;
+    }
+
+
+    /* ============================
+       المحادثة
+       ============================ */
+
+    #messages {
+
+      flex: 1;
+
+      overflow-y: auto;
+
+      padding: 18px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 12px;
+
+    }
+
+
+    .message {
+
+      max-width: 85%;
+
+      padding: 12px 15px;
+
+      border-radius: 18px;
+
+      line-height: 1.6;
+
+      white-space: pre-wrap;
+
+      word-break: break-word;
+
+    }
+
+
+    .user {
+
+      align-self: flex-start;
 
       background: #007aff;
 
       color: white;
 
-      font-size: 40px;
+      border-bottom-left-radius: 5px;
 
-      margin-top: 25px;
+    }
+
+
+    .assistant {
+
+      align-self: flex-end;
+
+      background: white;
+
+      color: #111827;
+
+      border-bottom-right-radius: 5px;
+
+      box-shadow:
+        0 2px 7px rgba(0,0,0,.08);
+
+    }
+
+
+    .welcome {
+
+      align-self: center;
+
+      margin-top: 20px;
+
+      color: #777;
+
+      text-align: center;
+
+      font-size: 14px;
+
+    }
+
+
+    /* ============================
+       منطقة الإدخال
+       ============================ */
+
+    .composer {
+
+      background: rgba(255,255,255,.95);
+
+      border-top: 1px solid #ddd;
+
+      padding:
+        10px
+        10px
+        calc(10px + env(safe-area-inset-bottom))
+        10px;
+
+    }
+
+
+    .input-row {
+
+      display: flex;
+
+      gap: 8px;
+
+      align-items: center;
+
+    }
+
+
+    #input {
+
+      flex: 1;
+
+      min-height: 46px;
+
+      max-height: 110px;
+
+      border: 1px solid #ccc;
+
+      border-radius: 18px;
+
+      padding: 12px 14px;
+
+      font: inherit;
+
+      font-size: 16px;
+
+      resize: none;
+
+      outline: none;
+
+      background: white;
+
+    }
+
+
+    #input:focus {
+
+      border-color: #007aff;
+
+    }
+
+
+    .icon-button {
+
+      width: 48px;
+
+      height: 48px;
+
+      flex-shrink: 0;
+
+      border: none;
+
+      border-radius: 50%;
+
+      font-size: 21px;
+
+      background: #111827;
+
+      color: white;
 
       cursor: pointer;
+
+    }
+
+
+    #mic {
+
+      background: #007aff;
+
     }
 
 
     #mic.listening {
 
       background: #dc2626;
+
+      animation: pulse 1s infinite;
+
     }
 
 
-    #text {
+    @keyframes pulse {
 
-      margin-top: 25px;
+      50% {
 
-      background: white;
+        transform: scale(1.08);
 
-      padding: 20px;
+      }
 
-      border-radius: 16px;
-
-      min-height: 70px;
-
-      font-size: 19px;
-
-      line-height: 1.6;
-
-      text-align: right;
-
-      box-shadow:
-        0 2px 8px rgba(0,0,0,.08);
     }
 
 
-    .buttons {
+    #send {
 
-      margin-top: 20px;
+      padding: 0 16px;
 
-      display: flex;
-
-      justify-content: center;
-
-      gap: 10px;
-
-      flex-wrap: wrap;
-    }
-
-
-    .action {
-
-      padding: 14px 20px;
+      height: 48px;
 
       border: none;
 
-      border-radius: 12px;
+      border-radius: 15px;
 
       background: #111827;
 
       color: white;
 
-      font-size: 16px;
+      font-size: 15px;
 
-      cursor: pointer;
+      white-space: nowrap;
+
     }
 
 
-    #status {
+    .bottom-buttons {
 
-      margin-top: 20px;
+      display: flex;
 
-      color: #666;
+      justify-content: center;
 
-      font-size: 14px;
+      gap: 8px;
+
+      margin-top: 8px;
+
+    }
+
+
+    .small-button {
+
+      border: none;
+
+      border-radius: 10px;
+
+      padding: 8px 12px;
+
+      background: #e5e7eb;
+
+      color: #333;
+
+      font-size: 12px;
+
+    }
+
+
+    .small-button:active,
+    .icon-button:active,
+    #send:active {
+
+      transform: scale(.96);
+
     }
 
   </style>
@@ -148,53 +386,112 @@
 <body>
 
 
-  <h1>
-    مساعدي الصوتي
-  </h1>
+<div class="app">
 
 
-  <button
-    id="mic"
-    type="button"
-  >
-    🎤
-  </button>
+  <!-- الرأس -->
+
+  <header>
+
+    <h1>
+      🤖 مساعدي AI
+    </h1>
+
+    <div id="status">
+      جاهز
+    </div>
+
+  </header>
 
 
-  <div id="text">
+  <!-- المحادثة -->
 
-    اضغط على الميكروفون وتحدث
+  <main id="messages">
 
-  </div>
-
-
-  <div class="buttons">
-
-    <button
-      id="send"
-      class="action"
-      type="button"
+    <div
+      class="welcome"
+      id="welcome"
     >
-      إرسال إلى المساعد
-    </button>
+
+      مرحبًا 👋<br>
+      اضغط 🎤 وتحدث معي
+
+    </div>
+
+  </main>
 
 
-    <button
-      id="speak"
-      class="action"
-      type="button"
-    >
-      🔊 استمع
-    </button>
+  <!-- الإدخال -->
+
+  <div class="composer">
+
+    <div class="input-row">
+
+
+      <button
+        id="mic"
+        class="icon-button"
+        type="button"
+        aria-label="الميكروفون"
+      >
+        🎤
+      </button>
+
+
+      <textarea
+        id="input"
+        placeholder="اكتب رسالتك..."
+        rows="1"
+      ></textarea>
+
+
+      <button
+        id="send"
+        type="button"
+      >
+        إرسال
+      </button>
+
+
+    </div>
+
+
+    <div class="bottom-buttons">
+
+
+      <button
+        id="speak"
+        class="small-button"
+        type="button"
+      >
+        🔊 استمع للرد
+      </button>
+
+
+      <button
+        id="stopSpeech"
+        class="small-button"
+        type="button"
+      >
+        ⏹️ إيقاف الصوت
+      </button>
+
+
+      <button
+        id="newChat"
+        class="small-button"
+        type="button"
+      >
+        🆕 محادثة جديدة
+      </button>
+
+
+    </div>
 
   </div>
 
 
-  <div id="status">
-
-    جاهز
-
-  </div>
+</div>
 
 
 
@@ -202,7 +499,7 @@
 
 
 /* =================================================
-   1 — ضع Chat URL الخاص بـ n8n هنا
+   Chat URL من n8n
    ================================================= */
 
 const N8N_CHAT_URL =
@@ -210,14 +507,14 @@ const N8N_CHAT_URL =
 
 
 /* =================================================
-   2 — عناصر الصفحة
+   عناصر الصفحة
    ================================================= */
 
 const mic =
   document.getElementById("mic");
 
-const text =
-  document.getElementById("text");
+const input =
+  document.getElementById("input");
 
 const send =
   document.getElementById("send");
@@ -225,12 +522,24 @@ const send =
 const speak =
   document.getElementById("speak");
 
+const stopSpeech =
+  document.getElementById("stopSpeech");
+
+const newChat =
+  document.getElementById("newChat");
+
+const messages =
+  document.getElementById("messages");
+
 const status =
   document.getElementById("status");
 
+const welcome =
+  document.getElementById("welcome");
+
 
 /* =================================================
-   3 — حفظ جلسة المحادثة
+   الجلسة
    ================================================= */
 
 let sessionId =
@@ -253,14 +562,56 @@ if (!sessionId) {
 
 
 /* =================================================
-   4 — آخر رد من المساعد
+   آخر رد
    ================================================= */
 
 let lastReply = "";
 
 
 /* =================================================
-   5 — الميكروفون
+   إضافة رسالة
+   ================================================= */
+
+function addMessage(
+  message,
+  type
+) {
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "message " + type;
+
+  div.textContent =
+    message;
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+    messages.scrollHeight;
+
+}
+
+
+/* =================================================
+   إخفاء الترحيب
+   ================================================= */
+
+function hideWelcome() {
+
+  if (welcome) {
+
+    welcome.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =================================================
+   الميكروفون
    ================================================= */
 
 const SpeechRecognition =
@@ -273,7 +624,7 @@ if (!SpeechRecognition) {
   mic.disabled = true;
 
   status.textContent =
-    "التعرف الصوتي غير متاح في هذا المتصفح";
+    "التعرف الصوتي غير متاح";
 
 } else {
 
@@ -325,7 +676,7 @@ if (!SpeechRecognition) {
       }
 
 
-      text.textContent =
+      input.value =
         result;
 
     };
@@ -339,7 +690,7 @@ if (!SpeechRecognition) {
       );
 
       status.textContent =
-        "خطأ في الميكروفون: " +
+        "خطأ: " +
         event.error;
 
     };
@@ -379,221 +730,263 @@ if (!SpeechRecognition) {
 
 
 /* =================================================
-   6 — إرسال الرسالة إلى n8n
+   إرسال الرسالة
+   ================================================= */
+
+async function sendMessage() {
+
+
+  const message =
+    input.value.trim();
+
+
+  if (!message) {
+
+    return;
+
+  }
+
+
+  hideWelcome();
+
+
+  addMessage(
+    message,
+    "user"
+  );
+
+
+  input.value = "";
+
+
+  status.textContent =
+    "جاري التفكير...";
+
+
+  if (
+    N8N_CHAT_URL ===
+    "ضع Chat URL هنا"
+  ) {
+
+    status.textContent =
+      "لم يتم وضع Chat URL";
+
+    return;
+
+  }
+
+
+  try {
+
+
+    const separator =
+      N8N_CHAT_URL.includes("?")
+        ? "&"
+        : "?";
+
+
+    const url =
+      N8N_CHAT_URL +
+      separator +
+      "action=sendMessage";
+
+
+    const response =
+      await fetch(
+        url,
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "Accept":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify({
+
+              action:
+                "sendMessage",
+
+              chatInput:
+                message,
+
+              sessionId:
+                sessionId
+
+            })
+
+        }
+      );
+
+
+    const raw =
+      await response.text();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "HTTP " +
+        response.status
+      );
+
+    }
+
+
+    /* =========================================
+       استخراج Streaming Response
+       ========================================= */
+
+    let reply = "";
+
+
+    const lines =
+      raw
+        .split("\n")
+        .map(
+          line =>
+            line.trim()
+        )
+        .filter(
+          line =>
+            line.length > 0
+        );
+
+
+    for (
+      const line of lines
+    ) {
+
+
+      try {
+
+
+        const data =
+          JSON.parse(line);
+
+
+        if (
+          data.type === "item" &&
+          typeof data.content ===
+            "string"
+        ) {
+
+          reply +=
+            data.content;
+
+        }
+
+
+      } catch(error) {
+
+        /* تجاهل السطر غير الصالح */
+
+      }
+
+    }
+
+
+    /* =========================================
+       JSON عادي إذا لم يكن Streaming
+       ========================================= */
+
+    if (!reply) {
+
+
+      try {
+
+
+        const data =
+          JSON.parse(raw);
+
+
+        reply =
+          data.output ??
+          data.text ??
+          data.response ??
+          data.message ??
+          raw;
+
+
+      } catch(error) {
+
+
+        reply =
+          raw;
+
+      }
+
+    }
+
+
+    lastReply =
+      reply;
+
+
+    addMessage(
+      reply,
+      "assistant"
+    );
+
+
+    status.textContent =
+      "جاهز";
+
+
+  } catch(error) {
+
+
+    console.error(error);
+
+
+    addMessage(
+      "تعذر الاتصال بالمساعد.",
+      "assistant"
+    );
+
+
+    status.textContent =
+      "حدث خطأ في الاتصال";
+
+
+  }
+
+}
+
+
+/* =================================================
+   زر الإرسال
    ================================================= */
 
 send.addEventListener(
   "click",
-  async function() {
+  sendMessage
+);
 
 
-    const message =
-      text.textContent.trim();
+/* =================================================
+   Enter للإرسال
+   ================================================= */
 
-
-    if (!message) {
-
-      status.textContent =
-        "لا توجد رسالة";
-
-      return;
-
-    }
-
+input.addEventListener(
+  "keydown",
+  function(event) {
 
     if (
-      N8N_CHAT_URL ===
-      "ضع Chat URL هنا"
+      event.key === "Enter" &&
+      !event.shiftKey
     ) {
 
-      status.textContent =
-        "لم يتم وضع Chat URL";
+      event.preventDefault();
 
-      return;
-
-    }
-
-
-    status.textContent =
-      "جاري الاتصال بـ n8n...";
-
-
-    try {
-
-
-      const separator =
-        N8N_CHAT_URL.includes("?")
-          ? "&"
-          : "?";
-
-
-      const url =
-        N8N_CHAT_URL +
-        separator +
-        "action=sendMessage";
-
-
-      const response =
-        await fetch(
-          url,
-          {
-
-            method: "POST",
-
-
-            headers: {
-
-              "Content-Type":
-                "application/json",
-
-              "Accept":
-                "application/json"
-
-            },
-
-
-            body:
-              JSON.stringify({
-
-                action:
-                  "sendMessage",
-
-                chatInput:
-                  message,
-
-                sessionId:
-                  sessionId
-
-              })
-
-          }
-        );
-
-
-      const raw =
-        await response.text();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "HTTP " +
-          response.status
-        );
-
-      }
-
-
-      /* =========================================
-         استخراج الرد من Streaming
-         ========================================= */
-
-      let reply = "";
-
-
-      const lines =
-        raw
-          .split("\n")
-          .map(
-            line =>
-              line.trim()
-          )
-          .filter(
-            line =>
-              line.length > 0
-          );
-
-
-      for (
-        const line of lines
-      ) {
-
-        try {
-
-
-          const data =
-            JSON.parse(line);
-
-
-          if (
-            data.type === "item" &&
-            typeof data.content ===
-              "string"
-          ) {
-
-            reply +=
-              data.content;
-
-          }
-
-
-        } catch(error) {
-
-          /* تجاهل السطر غير الصالح */
-
-        }
-
-      }
-
-
-      /* =========================================
-         إذا كان الرد JSON عادي
-         ========================================= */
-
-      if (!reply) {
-
-
-        try {
-
-
-          const data =
-            JSON.parse(raw);
-
-
-          reply =
-            data.output ??
-            data.text ??
-            data.response ??
-            data.message ??
-            raw;
-
-
-        } catch(error) {
-
-
-          reply =
-            raw;
-
-        }
-
-      }
-
-
-      /* =========================================
-         عرض الرد
-         ========================================= */
-
-      lastReply =
-        reply;
-
-
-      text.textContent =
-        reply;
-
-
-      status.textContent =
-        "تم استلام الرد ✅";
-
-
-    } catch(error) {
-
-
-      console.error(error);
-
-
-      status.textContent =
-        "تعذر الاتصال بـ n8n";
-
+      sendMessage();
 
     }
 
@@ -602,7 +995,7 @@ send.addEventListener(
 
 
 /* =================================================
-   7 — زر قراءة الرد بصوت
+   قراءة الرد بصوت
    ================================================= */
 
 speak.addEventListener(
@@ -625,7 +1018,7 @@ speak.addEventListener(
     ) {
 
       status.textContent =
-        "الصوت غير متاح في هذا المتصفح";
+        "الصوت غير متاح";
 
       return;
 
@@ -659,7 +1052,97 @@ speak.addEventListener(
 
 
     status.textContent =
-      "🔊 يتم تشغيل الرد...";
+      "🔊 يتم تشغيل الرد";
+
+
+  }
+);
+
+
+/* =================================================
+   إيقاف الصوت
+   ================================================= */
+
+stopSpeech.addEventListener(
+  "click",
+  function() {
+
+    if (
+      "speechSynthesis" in window
+    ) {
+
+      window.speechSynthesis.cancel();
+
+      status.textContent =
+        "تم إيقاف الصوت";
+
+    }
+
+  }
+);
+
+
+/* =================================================
+   محادثة جديدة
+   ================================================= */
+
+newChat.addEventListener(
+  "click",
+  function() {
+
+
+    if (
+      !confirm(
+        "هل تريد بدء محادثة جديدة؟"
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    localStorage.removeItem(
+      "voice_assistant_session"
+    );
+
+
+    sessionId =
+      crypto.randomUUID();
+
+
+    localStorage.setItem(
+      "voice_assistant_session",
+      sessionId
+    );
+
+
+    messages.innerHTML = "";
+
+
+    const newWelcome =
+      document.createElement("div");
+
+
+    newWelcome.className =
+      "welcome";
+
+
+    newWelcome.innerHTML =
+      "مرحبًا 👋<br>اضغط 🎤 وتحدث معي";
+
+
+    messages.appendChild(
+      newWelcome
+    );
+
+
+    lastReply =
+      "";
+
+
+    status.textContent =
+      "محادثة جديدة";
 
   }
 );
