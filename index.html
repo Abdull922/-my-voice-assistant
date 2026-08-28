@@ -1,112 +1,217 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>مساعدي الصوتي</title>
 
+
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #f2f2f7;
-      font-family: Arial, sans-serif;
-      text-align: center;
+
+    * {
+      box-sizing: border-box;
     }
+
+    body {
+
+      margin: 0;
+
+      padding: 20px;
+
+      background: #f2f2f7;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      text-align: center;
+
+      color: #111827;
+    }
+
 
     h1 {
-      margin-top: 30px;
+
+      margin-top: 25px;
+
+      font-size: 25px;
     }
+
 
     #mic {
+
       width: 100px;
+
       height: 100px;
+
       border-radius: 50%;
+
       border: none;
+
       background: #007aff;
+
       color: white;
+
       font-size: 40px;
-      margin-top: 40px;
+
+      margin-top: 25px;
+
+      cursor: pointer;
     }
+
 
     #mic.listening {
-      background: red;
+
+      background: #dc2626;
     }
+
 
     #text {
-      margin-top: 30px;
+
+      margin-top: 25px;
+
       background: white;
+
       padding: 20px;
-      border-radius: 15px;
-      min-height: 50px;
-      font-size: 20px;
+
+      border-radius: 16px;
+
+      min-height: 70px;
+
+      font-size: 19px;
+
+      line-height: 1.6;
+
+      text-align: right;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,.08);
     }
 
-    #send {
+
+    .buttons {
+
       margin-top: 20px;
-      padding: 14px 25px;
-      border: none;
-      border-radius: 12px;
-      background: #111827;
-      color: white;
-      font-size: 17px;
+
+      display: flex;
+
+      justify-content: center;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
     }
+
+
+    .action {
+
+      padding: 14px 20px;
+
+      border: none;
+
+      border-radius: 12px;
+
+      background: #111827;
+
+      color: white;
+
+      font-size: 16px;
+
+      cursor: pointer;
+    }
+
 
     #status {
+
       margin-top: 20px;
+
       color: #666;
+
+      font-size: 14px;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-<h1>مساعدي الصوتي</h1>
 
-<button id="mic">🎤</button>
+  <h1>
+    مساعدي الصوتي
+  </h1>
 
-<div id="text">
-  اضغط على الميكروفون وتحدث
-</div>
-<button id="send">
-  إرسال إلى المساعد
-</button>
 
-<button id="speak">
-  🔊 استمع
-</button>
+  <button
+    id="mic"
+    type="button"
+  >
+    🎤
+  </button>
 
-<div id="status">
-  جاهز
-</div>
+
+  <div id="text">
+
+    اضغط على الميكروفون وتحدث
+
+  </div>
+
+
+  <div class="buttons">
+
+    <button
+      id="send"
+      class="action"
+      type="button"
+    >
+      إرسال إلى المساعد
+    </button>
+
+
+    <button
+      id="speak"
+      class="action"
+      type="button"
+    >
+      🔊 استمع
+    </button>
+
+  </div>
+
+
+  <div id="status">
+
+    جاهز
+
+  </div>
+
 
 
 <script>
 
-/* ==================================================
-   1 — ضع Chat URL هنا
-   ==================================================
 
-   احذف النص الموجود بين علامتي الاقتباس
-   وضع Chat URL الذي نسخته من n8n.
-
-   مثال فقط:
-
-   const N8N_CHAT_URL =
-     "https://example.n8n.cloud/webhook/xxxx/chat";
-
-   ==================================================
-*/
+/* =================================================
+   1 — ضع Chat URL الخاص بـ n8n هنا
+   ================================================= */
 
 const N8N_CHAT_URL =
   "https://abdulla.app.n8n.cloud/webhook/f987df40-2b5a-4f9e-a419-71c967825711/chat";
 
 
-/* ==================================================
+/* =================================================
    2 — عناصر الصفحة
-   ==================================================
-*/
+   ================================================= */
 
 const mic =
   document.getElementById("mic");
@@ -117,23 +222,22 @@ const text =
 const send =
   document.getElementById("send");
 
-const status =
-  document.getElementById("status");
-  const speak =
+const speak =
   document.getElementById("speak");
 
-let lastReply = "";
+const status =
+  document.getElementById("status");
 
 
-/* ==================================================
-   3 — Session ID
-   ==================================================
-*/
+/* =================================================
+   3 — حفظ جلسة المحادثة
+   ================================================= */
 
 let sessionId =
   localStorage.getItem(
     "voice_assistant_session"
   );
+
 
 if (!sessionId) {
 
@@ -144,13 +248,20 @@ if (!sessionId) {
     "voice_assistant_session",
     sessionId
   );
+
 }
 
 
-/* ==================================================
-   4 — التعرف على الصوت
-   ==================================================
-*/
+/* =================================================
+   4 — آخر رد من المساعد
+   ================================================= */
+
+let lastReply = "";
+
+
+/* =================================================
+   5 — الميكروفون
+   ================================================= */
 
 const SpeechRecognition =
   window.SpeechRecognition ||
@@ -166,17 +277,85 @@ if (!SpeechRecognition) {
 
 } else {
 
+
   const recognition =
     new SpeechRecognition();
+
 
   recognition.lang =
     "ar-SA";
 
+
   recognition.continuous =
     false;
 
+
   recognition.interimResults =
     true;
+
+
+  recognition.onstart =
+    function() {
+
+      mic.classList.add(
+        "listening"
+      );
+
+      status.textContent =
+        "🎙️ أستمع إليك...";
+
+    };
+
+
+  recognition.onresult =
+    function(event) {
+
+      let result = "";
+
+
+      for (
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ) {
+
+        result +=
+          event.results[i][0].transcript;
+
+      }
+
+
+      text.textContent =
+        result;
+
+    };
+
+
+  recognition.onerror =
+    function(event) {
+
+      mic.classList.remove(
+        "listening"
+      );
+
+      status.textContent =
+        "خطأ في الميكروفون: " +
+        event.error;
+
+    };
+
+
+  recognition.onend =
+    function() {
+
+      mic.classList.remove(
+        "listening"
+      );
+
+      status.textContent =
+        "جاهز";
+
+    };
 
 
   mic.addEventListener(
@@ -193,85 +372,20 @@ if (!SpeechRecognition) {
 
       }
 
-    };
-
-
-  recognition.addEventListener(
-    "start",
-    function() {
-
-      mic.classList.add(
-        "listening"
-      );
-
-      status.textContent =
-        "🎙️ أستمع إليك...";
-
-    }
-  );
-
-
-  recognition.addEventListener(
-    "result",
-    function(event) {
-
-      let result = "";
-
-      for (
-        let i = event.resultIndex;
-        i < event.results.length;
-        i++
-      ) {
-
-        result +=
-          event.results[i][0].transcript;
-
-      }
-
-      text.textContent =
-        result;
-
-    }
-  );
-
-
-  recognition.addEventListener(
-    "error",
-    function(event) {
-
-      status.textContent =
-        "خطأ في الميكروفون: " +
-        event.error;
-
-    }
-  );
-
-
-  recognition.addEventListener(
-    "end",
-    function() {
-
-      mic.classList.remove(
-        "listening"
-      );
-
-      status.textContent =
-        "جاهز";
-
     }
   );
 
 }
 
 
-/* ==================================================
-   5 — إرسال النص إلى n8n
-   ==================================================
-*/
+/* =================================================
+   6 — إرسال الرسالة إلى n8n
+   ================================================= */
 
 send.addEventListener(
   "click",
   async function() {
+
 
     const message =
       text.textContent.trim();
@@ -280,7 +394,7 @@ send.addEventListener(
     if (!message) {
 
       status.textContent =
-        "لا توجد رسالة لإرسالها";
+        "لا توجد رسالة";
 
       return;
 
@@ -293,7 +407,7 @@ send.addEventListener(
     ) {
 
       status.textContent =
-        "لم تضع Chat URL الخاص بـ n8n";
+        "لم يتم وضع Chat URL";
 
       return;
 
@@ -301,10 +415,11 @@ send.addEventListener(
 
 
     status.textContent =
-      "جاري الإرسال إلى n8n...";
+      "جاري الاتصال بـ n8n...";
 
 
     try {
+
 
       const separator =
         N8N_CHAT_URL.includes("?")
@@ -322,15 +437,20 @@ send.addEventListener(
         await fetch(
           url,
           {
+
             method: "POST",
 
+
             headers: {
+
               "Content-Type":
                 "application/json",
 
               "Accept":
                 "application/json"
+
             },
+
 
             body:
               JSON.stringify({
@@ -345,138 +465,208 @@ send.addEventListener(
                   sessionId
 
               })
+
           }
         );
-const raw =
-  await response.text();
 
-if (!response.ok) {
-  throw new Error(
-    "HTTP " + response.status
-  );
-}
 
-let reply = "";
+      const raw =
+        await response.text();
 
-const lines =
-  raw
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line);
 
-for (const line of lines) {
+      if (!response.ok) {
 
-  try {
+        throw new Error(
+          "HTTP " +
+          response.status
+        );
 
-    const data =
-      JSON.parse(line);
+      }
 
-    if (
-      data.type === "item" &&
-      typeof data.content === "string"
-    ) {
 
-      reply += data.content;
+      /* =========================================
+         استخراج الرد من Streaming
+         ========================================= */
 
-    }
+      let reply = "";
 
-  } catch(error) {
 
-    // تجاهل السطر غير الصالح
+      const lines =
+        raw
+          .split("\n")
+          .map(
+            line =>
+              line.trim()
+          )
+          .filter(
+            line =>
+              line.length > 0
+          );
 
-  }
-}
 
-if (!reply) {
+      for (
+        const line of lines
+      ) {
 
-  try {
+        try {
 
-    const data =
-      JSON.parse(raw);
 
-    reply =
-      data.output ??
-      data.text ??
-      data.response ??
-      data.message ??
-      raw;
+          const data =
+            JSON.parse(line);
 
-  } catch(error) {
 
-    reply = raw;
+          if (
+            data.type === "item" &&
+            typeof data.content ===
+              "string"
+          ) {
 
-  }
-}
+            reply +=
+              data.content;
 
-text.textContent =
-  reply;
+          }
+
+
+        } catch(error) {
+
+          /* تجاهل السطر غير الصالح */
+
+        }
+
+      }
+
+
+      /* =========================================
+         إذا كان الرد JSON عادي
+         ========================================= */
+
+      if (!reply) {
+
+
+        try {
+
+
+          const data =
+            JSON.parse(raw);
+
+
+          reply =
+            data.output ??
+            data.text ??
+            data.response ??
+            data.message ??
+            raw;
+
+
+        } catch(error) {
+
+
+          reply =
+            raw;
+
+        }
+
+      }
+
+
+      /* =========================================
+         عرض الرد
+         ========================================= */
+
       lastReply =
-
-  reply;
-
-
-/* ================================
-   قراءة رد المساعد بصوت
-   ================================ */
+        reply;
 
 
-}
+      text.textContent =
+        reply;
 
 
-status.textContent =
-  "تم استلام الرد 🔊";
-
+      status.textContent =
+        "تم استلام الرد ✅";
 
 
     } catch(error) {
 
+
       console.error(error);
+
 
       status.textContent =
         "تعذر الاتصال بـ n8n";
+
 
     }
 
   }
 );
 
-</script>
 
-</body>
-</html>
+/* =================================================
+   7 — زر قراءة الرد بصوت
+   ================================================= */
+
 speak.addEventListener(
   "click",
   function() {
 
+
     if (!lastReply) {
+
+      status.textContent =
+        "لا يوجد رد لقراءته";
+
       return;
+
     }
 
-    if (!("speechSynthesis" in window)) {
+
+    if (
+      !("speechSynthesis" in window)
+    ) {
+
       status.textContent =
         "الصوت غير متاح في هذا المتصفح";
+
       return;
+
     }
 
+
     window.speechSynthesis.cancel();
+
 
     const speech =
       new SpeechSynthesisUtterance(
         lastReply
       );
 
+
     speech.lang =
       "ar-SA";
+
 
     speech.rate =
       0.9;
 
+
     speech.pitch =
       1;
+
 
     window.speechSynthesis.speak(
       speech
     );
 
+
+    status.textContent =
+      "🔊 يتم تشغيل الرد...";
+
   }
 );
+
+
+</script>
+
+</body>
+
+</html>
