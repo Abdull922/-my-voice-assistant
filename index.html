@@ -405,8 +405,36 @@ if (!reply) {
 text.textContent =
   reply;
 
+
+/* ================================
+   قراءة رد المساعد بصوت
+   ================================ */
+
+if ("speechSynthesis" in window) {
+
+  window.speechSynthesis.cancel();
+
+  const speech =
+    new SpeechSynthesisUtterance(reply);
+
+  speech.lang =
+    "ar-SA";
+
+  speech.rate =
+    0.9;
+
+  speech.pitch =
+    1;
+
+  window.speechSynthesis.speak(
+    speech
+  );
+
+}
+
+
 status.textContent =
-  "تم استلام الرد ✅";
+  "تم استلام الرد 🔊";
 
 
 
