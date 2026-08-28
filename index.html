@@ -1,991 +1,582 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
-
-  <meta
-    name="apple-mobile-web-app-capable"
-    content="yes"
-  >
-
-  <meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="black-translucent"
-  >
-
-  <meta
-    name="apple-mobile-web-app-title"
-    content="مساعدي AI"
-  >
-
-  <title>مساعدي AI</title>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-
-      margin: 0;
-      padding: 0;
-
-      width: 100%;
-      height: 100%;
-
-      background: #f2f2f7;
-
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    }
-
-    body {
-      overflow: hidden;
-    }
-
-    .app {
-
-      height: 100dvh;
-
-      display: flex;
-      flex-direction: column;
-
-      max-width: 700px;
-      margin: auto;
-
-      background: #f2f2f7;
-
-    }
-
-    header {
-
-      background: #111827;
-      color: white;
-
-      padding:
-        calc(15px + env(safe-area-inset-top))
-        18px
-        15px
-        18px;
-
-      text-align: center;
-
-    }
-
-    header h1 {
-
-      margin: 0;
-      font-size: 21px;
-
-    }
-
-    #status {
-
-      margin-top: 5px;
-
-      font-size: 12px;
-
-      opacity: .7;
-
-    }
-
-    #messages {
-
-      flex: 1;
-
-      overflow-y: auto;
-
-      padding: 18px;
-
-      display: flex;
-
-      flex-direction: column;
-
-      gap: 12px;
-
-    }
-
-    .message {
-
-      max-width: 85%;
-
-      padding: 12px 15px;
-
-      border-radius: 18px;
-
-      line-height: 1.6;
-
-      white-space: pre-wrap;
-
-      word-break: break-word;
-
-    }
-
-    .user {
-
-      align-self: flex-start;
-
-      background: #007aff;
-
-      color: white;
-
-      border-bottom-left-radius: 5px;
-
-    }
-
-    .assistant {
-
-      align-self: flex-end;
-
-      background: white;
-
-      color: #111827;
-
-      border-bottom-right-radius: 5px;
-
-      box-shadow:
-        0 2px 7px rgba(0,0,0,.08);
-
-    }
-
-    .welcome {
-
-      align-self: center;
-
-      margin-top: 20px;
-
-      color: #777;
-
-      text-align: center;
-
-      font-size: 14px;
-
-    }
-
-    .composer {
-
-      background: rgba(255,255,255,.95);
-
-      border-top: 1px solid #ddd;
-
-      padding:
-        10px
-        10px
-        calc(10px + env(safe-area-inset-bottom))
-        10px;
-
-    }
-
-    .input-row {
-
-      display: flex;
-
-      gap: 8px;
-
-      align-items: center;
-
-    }
-
-    #input {
-
-      flex: 1;
-
-      min-height: 46px;
-
-      max-height: 110px;
-
-      border: 1px solid #ccc;
-
-      border-radius: 18px;
-
-      padding: 12px 14px;
-
-      font: inherit;
-
-      font-size: 16px;
-
-      resize: none;
-
-      outline: none;
-
-      background: white;
-
-    }
-
-    #input:focus {
-
-      border-color: #007aff;
-
-    }
-
-    .icon-button {
-
-      width: 48px;
-
-      height: 48px;
-
-      flex-shrink: 0;
-
-      border: none;
-
-      border-radius: 50%;
-
-      font-size: 21px;
-
-      background: #111827;
-
-      color: white;
-
-      cursor: pointer;
-
-    }
-
-    #mic {
-
-      background: #007aff;
-
-    }
-
-    #mic.listening {
-
-      background: #dc2626;
-
-      animation: pulse 1s infinite;
-
-    }
-
-    @keyframes pulse {
-
-      50% {
-        transform: scale(1.08);
-      }
-
-    }
-
-    #send {
-
-      padding: 0 16px;
-
-      height: 48px;
-
-      border: none;
-
-      border-radius: 15px;
-
-      background: #111827;
-
-      color: white;
-
-      font-size: 15px;
-
-      white-space: nowrap;
-
-    }
-
-    .bottom-buttons {
-
-      display: flex;
-
-      justify-content: center;
-
-      gap: 8px;
-
-      margin-top: 8px;
-
-      flex-wrap: wrap;
-
-    }
-
-    .small-button {
-
-      border: none;
-
-      border-radius: 10px;
-
-      padding: 8px 12px;
-
-      background: #e5e7eb;
-
-      color: #333;
-
-      font-size: 12px;
-
-    }
-
-    .small-button:active,
-    .icon-button:active,
-    #send:active {
-
-      transform: scale(.96);
-
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+<meta
+  name="apple-mobile-web-app-capable"
+  content="yes"
+>
+<meta
+  name="apple-mobile-web-app-status-bar-style"
+  content="black-translucent"
+>
+<meta
+  name="apple-mobile-web-app-title"
+  content="مساعدي AI"
+>
+<title>مساعدي AI</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #f2f2f7;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+body {
+  overflow: hidden;
+}
+.app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 700px;
+  margin: auto;
+  background: #f2f2f7;
+}
+/* =========================
+   الرأس
+   ========================= */
+header {
+  background: #111827;
+  color: white;
+  padding:
+    calc(15px + env(safe-area-inset-top))
+    18px
+    15px
+    18px;
+  text-align: center;
+}
+header h1 {
+  margin: 0;
+  font-size: 21px;
+}
+#status {
+  margin-top: 5px;
+  font-size: 12px;
+  opacity: .75;
+}
+/* =========================
+   المحادثة
+   ========================= */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.message {
+  max-width: 85%;
+  padding: 12px 15px;
+  border-radius: 18px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.user {
+  align-self: flex-start;
+  background: #007aff;
+  color: white;
+  border-bottom-left-radius: 5px;
+}
+.assistant {
+  align-self: flex-end;
+  background: white;
+  color: #111827;
+  border-bottom-right-radius: 5px;
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.08);
+}
+.welcome {
+  align-self: center;
+  margin-top: 20px;
+  color: #777;
+  text-align: center;
+  font-size: 14px;
+}
+/* =========================
+   منطقة الإدخال
+   ========================= */
+.composer {
+  background: rgba(255,255,255,.96);
+  border-top: 1px solid #ddd;
+  padding:
+    10px
+    10px
+    calc(10px + env(safe-area-inset-bottom))
+    10px;
+}
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+#input {
+  flex: 1;
+  min-height: 46px;
+  max-height: 110px;
+  border: 1px solid #ccc;
+  border-radius: 18px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 16px;
+  resize: none;
+  outline: none;
+  background: white;
+}
+#input:focus {
+  border-color: #007aff;
+}
+.icon-button {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  font-size: 21px;
+  background: #111827;
+  color: white;
+}
+#mic {
+  background: #007aff;
+}
+#mic.listening {
+  background: #dc2626;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  50% {
+    transform: scale(1.08);
+  }
+}
+#send {
+  padding: 0 16px;
+  height: 48px;
+  border: none;
+  border-radius: 15px;
+  background: #111827;
+  color: white;
+  font-size: 15px;
+}
+.bottom-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.small-button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: #e5e7eb;
+  color: #333;
+  font-size: 12px;
+}
+.small-button:active,
+.icon-button:active,
+#send:active {
+  transform: scale(.96);
+}
+</style>
 </head>
-
-
 <body>
-
-
 <div class="app">
-
-
-  <header>
-
-    <h1>
-      🤖 مساعدي AI
-    </h1>
-
-    <div id="status">
-      جاهز
-    </div>
-
-  </header>
-
-
-  <main id="messages">
-
-    <div
-      class="welcome"
-      id="welcome"
-    >
-
-      مرحبًا 👋<br>
-      اضغط 🎤 وتحدث معي
-
-    </div>
-
-  </main>
-
-
-  <div class="composer">
-
-
-    <div class="input-row">
-
-
-      <button
-        id="mic"
-        class="icon-button"
-        type="button"
-      >
-        🎤
-      </button>
-
-
-      <textarea
-        id="input"
-        placeholder="اكتب رسالتك..."
-        rows="1"
-      ></textarea>
-
-
-      <button
-        id="send"
-        type="button"
-      >
-        إرسال
-      </button>
-
-
-    </div>
-
-
-    <div class="bottom-buttons">
-
-
-      <button
-        id="location"
-        class="small-button"
-        type="button"
-      >
-        📍 موقعي
-      </button>
-
-
-      <button
-        id="speak"
-        class="small-button"
-        type="button"
-      >
-        🔊 استمع للرد
-      </button>
-
-
-      <button
-        id="stopSpeech"
-        class="small-button"
-        type="button"
-      >
-        ⏹️ إيقاف الصوت
-      </button>
-
-
-      <button
-        id="newChat"
-        class="small-button"
-        type="button"
-      >
-        🆕 محادثة جديدة
-      </button>
-
-
-    </div>
-
-
-  </div>
-
-
+<header>
+<h1>
+🤖 مساعدي AI
+</h1>
+<div id="status">
+جاهز
 </div>
-
-
+</header>
+<main id="messages">
+<div
+  class="welcome"
+  id="welcome"
+>
+مرحبًا 👋<br>
+اضغط 🎤 وتحدث معي
+</div>
+</main>
+<div class="composer">
+<div class="input-row">
+<button
+  id="mic"
+  class="icon-button"
+  type="button"
+>
+🎤
+</button>
+<textarea
+  id="input"
+  placeholder="اكتب رسالتك..."
+  rows="1"
+></textarea>
+<button
+  id="send"
+  type="button"
+>
+إرسال
+</button>
+</div>
+<div class="bottom-buttons">
+<button
+  id="location"
+  class="small-button"
+  type="button"
+>
+📍 موقعي
+</button>
+<button
+  id="speak"
+  class="small-button"
+  type="button"
+>
+🔊 استمع للرد
+</button>
+<button
+  id="stopSpeech"
+  class="small-button"
+  type="button"
+>
+⏹️ إيقاف الصوت
+</button>
+<button
+  id="newChat"
+  class="small-button"
+  type="button"
+>
+🆕 محادثة جديدة
+</button>
+</div>
+</div>
+</div>
 <script>
-
-
 /* =================================================
-   ضع هنا نفس Chat URL الذي يعمل عندك في n8n
+   ضع هنا نفس Chat URL الموجود عندك في n8n
    ================================================= */
-
 const N8N_CHAT_URL =
   "https://abdulla.app.n8n.cloud/webhook/f987df40-2b5a-4f9e-a419-71c967825711/chat";
-
-
 /* =================================================
    عناصر الصفحة
    ================================================= */
-
 const mic =
   document.getElementById("mic");
-
 const input =
   document.getElementById("input");
-
 const send =
   document.getElementById("send");
-
 const speak =
   document.getElementById("speak");
-
 const stopSpeech =
   document.getElementById("stopSpeech");
-
 const newChat =
   document.getElementById("newChat");
-
 const locationButton =
   document.getElementById("location");
-
 const messages =
   document.getElementById("messages");
-
 const status =
   document.getElementById("status");
-
 const welcome =
   document.getElementById("welcome");
-
-
 /* =================================================
-   الموقع
+   معلومات الموقع
    ================================================= */
-
 let userLatitude = null;
-
 let userLongitude = null;
-
 let userAccuracy = null;
-
-
 /* =================================================
    الجلسة
    ================================================= */
-
 let sessionId =
   localStorage.getItem(
     "voice_assistant_session"
   );
-
-
 if (!sessionId) {
-
   sessionId =
     crypto.randomUUID();
-
   localStorage.setItem(
     "voice_assistant_session",
     sessionId
   );
-
 }
-
-
 /* =================================================
    آخر رد
    ================================================= */
-
 let lastReply = "";
-
-
 /* =================================================
    إضافة رسالة
    ================================================= */
-
 function addMessage(
   message,
   type
 ) {
-
   const div =
     document.createElement("div");
-
   div.className =
     "message " + type;
-
   div.textContent =
     message;
-
   messages.appendChild(div);
-
   messages.scrollTop =
     messages.scrollHeight;
-
 }
-
-
 /* =================================================
-   الموقع — زر موقعي
+   إخفاء رسالة الترحيب
    ================================================= */
-
+function hideWelcome() {
+  if (welcome) {
+    welcome.style.display =
+      "none";
+  }
+}
+/* =================================================
+   تحديد الموقع
+   ================================================= */
 locationButton.addEventListener(
   "click",
   function() {
-
-
     if (!navigator.geolocation) {
-
       status.textContent =
-        "الموقع غير متاح في هذا المتصفح";
-
+        "الموقع غير متاح";
       return;
-
     }
-
-
     status.textContent =
       "📍 جاري تحديد موقعك...";
-
-
     navigator.geolocation.getCurrentPosition(
-
       function(position) {
-
-
         userLatitude =
           position.coords.latitude;
-
-
         userLongitude =
           position.coords.longitude;
-
-
         userAccuracy =
           position.coords.accuracy;
-
-
         status.textContent =
           "📍 تم تحديد موقعك";
-
-
-        console.log(
-          "Latitude:",
-          userLatitude
-        );
-
-
-        console.log(
-          "Longitude:",
-          userLongitude
-        );
-
-
-        console.log(
-          "Accuracy:",
-          userAccuracy
-        );
-
-
       },
-
-
       function(error) {
-
-
-        console.log(
-          "Location error:",
-          error
-        );
-
-
+        console.log(error);
         userLatitude =
           null;
-
-
         userLongitude =
           null;
-
-
         userAccuracy =
           null;
-
-
         if (
           error.code === 1
         ) {
-
           status.textContent =
             "تم رفض إذن الموقع";
-
-        } else if (
+        }
+        else if (
           error.code === 2
         ) {
-
           status.textContent =
             "تعذر تحديد موقعك";
-
-        } else if (
+        }
+        else if (
           error.code === 3
         ) {
-
           status.textContent =
             "انتهى وقت تحديد الموقع";
-
-        } else {
-
+        }
+        else {
           status.textContent =
             "حدث خطأ في الموقع";
-
         }
-
       },
-
-
       {
-
         enableHighAccuracy:
           true,
-
         timeout:
           20000,
-
         maximumAge:
           0
-
       }
-
     );
-
   }
 );
-
-
 /* =================================================
    الميكروفون
    ================================================= */
-
 const SpeechRecognition =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
-
-
 if (!SpeechRecognition) {
-
-
   mic.disabled =
     true;
-
-
   status.textContent =
     "التعرف الصوتي غير متاح";
-
-
 } else {
-
-
   const recognition =
     new SpeechRecognition();
-
-
   recognition.lang =
     "ar-SA";
-
-
   recognition.continuous =
     false;
-
-
   recognition.interimResults =
     true;
-
-
   recognition.onstart =
     function() {
-
-
       mic.classList.add(
         "listening"
       );
-
-
       status.textContent =
         "🎙️ أستمع إليك...";
-
-
     };
-
-
   recognition.onresult =
     function(event) {
-
-
       let result = "";
-
-
       for (
         let i = event.resultIndex;
         i < event.results.length;
         i++
       ) {
-
-
         result +=
           event.results[i][0].transcript;
-
-
       }
-
-
       input.value =
         result;
-
-
     };
-
-
   recognition.onerror =
     function(event) {
-
-
       mic.classList.remove(
         "listening"
       );
-
-
       status.textContent =
         "خطأ: " +
         event.error;
-
-
     };
-
-
   recognition.onend =
     function() {
-
-
       mic.classList.remove(
         "listening"
       );
-
-
       status.textContent =
         "جاهز";
-
-
     };
-
-
   mic.addEventListener(
     "click",
     function() {
-
-
       try {
-
         recognition.start();
-
       } catch(error) {
-
         console.log(error);
-
       }
-
     }
   );
-
 }
-
-
 /* =================================================
    إرسال الرسالة
    ================================================= */
-
 async function sendMessage() {
-
-
   const message =
     input.value.trim();
-
-
   if (!message) {
-
-    status.textContent =
-      "لا توجد رسالة";
-
     return;
-
   }
-
-
   if (
     N8N_CHAT_URL ===
     "ضع Chat URL هنا"
   ) {
-
     status.textContent =
-      "لم يتم وضع Chat URL";
-
+      "ضع Chat URL أولًا";
     return;
-
   }
-
-
   hideWelcome();
-
-
   addMessage(
     message,
     "user"
   );
-
-
   input.value =
     "";
-
-
   status.textContent =
-    "جاري الاتصال بالمساعد...";
-
-
+    "جاري التفكير...";
   try {
-
-
     const separator =
       N8N_CHAT_URL.includes("?")
         ? "&"
         : "?";
-
-
     const url =
       N8N_CHAT_URL +
       separator +
       "action=sendMessage";
-
-
+    /* =============================================
+       تجهيز نص الرسالة
+       ============================================= */
+    let messageForAI =
+      message;
+    if (
+      userLatitude !== null &&
+      userLongitude !== null
+    ) {
+      messageForAI +=
+        "\n\n" +
+        "معلومات موقع المستخدم الحالية:" +
+        "\n" +
+        "خط العرض (Latitude): " +
+        userLatitude +
+        "\n" +
+        "خط الطول (Longitude): " +
+        userLongitude +
+        "\n" +
+        "دقة الموقع التقريبية: " +
+        userAccuracy +
+        " متر.";
+    }
     const response =
       await fetch(
         url,
         {
-
           method:
             "POST",
-
-
           headers: {
-
             "Content-Type":
               "application/json",
-
             "Accept":
               "application/json"
-
           },
-
-
           body:
             JSON.stringify({
-
               action:
                 "sendMessage",
-
               chatInput:
-                message,
-
+                messageForAI,
               sessionId:
-                sessionId,
-
-
-              /* ======================
-                 معلومات الموقع
-                 ====================== */
-
-              location:
-                userLatitude !== null
-                  ? {
-
-                      latitude:
-                        userLatitude,
-
-                      longitude:
-                        userLongitude,
-
-                      accuracy:
-                        userAccuracy
-
-                    }
-                  : null
-
+                sessionId
             })
-
         }
       );
-
-
     const raw =
       await response.text();
-
-
     if (!response.ok) {
-
       throw new Error(
         "HTTP " +
         response.status
       );
-
     }
-
-
-    /* =================================================
-       استخراج رد Streaming
-       ================================================= */
-
+    /* =============================================
+       قراءة Streaming Response
+       ============================================= */
     let reply = "";
-
-
     const lines =
       raw
         .split("\n")
@@ -997,350 +588,180 @@ async function sendMessage() {
           line =>
             line.length > 0
         );
-
-
     for (
       const line of lines
     ) {
-
-
       try {
-
-
         const data =
           JSON.parse(line);
-
-
         if (
           data.type === "item" &&
           typeof data.content ===
             "string"
         ) {
-
-
           reply +=
             data.content;
-
-
         }
-
-
       } catch(error) {
-
-
-        /* تجاهل السطر غير الصالح */
-
-
+        /* تجاهل الأسطر غير الصالحة */
       }
-
     }
-
-
-    /* =================================================
+    /* =============================================
        JSON عادي
-       ================================================= */
-
+       ============================================= */
     if (!reply) {
-
-
       try {
-
-
         const data =
           JSON.parse(raw);
-
-
         reply =
           data.output ??
           data.text ??
           data.response ??
           data.message ??
           raw;
-
-
       } catch(error) {
-
-
         reply =
           raw;
-
-
       }
-
     }
-
-
     lastReply =
       reply;
-
-
     addMessage(
       reply,
       "assistant"
     );
-
-
     status.textContent =
       "جاهز";
-
-
   } catch(error) {
-
-
     console.error(error);
-
-
     addMessage(
       "تعذر الاتصال بالمساعد.",
       "assistant"
     );
-
-
     status.textContent =
       "حدث خطأ في الاتصال";
-
-
   }
-
 }
-
-
 /* =================================================
-   إرسال
+   زر الإرسال
    ================================================= */
-
 send.addEventListener(
   "click",
   sendMessage
 );
-
-
 /* =================================================
-   Enter
+   Enter للإرسال
    ================================================= */
-
 input.addEventListener(
   "keydown",
   function(event) {
-
-
     if (
       event.key === "Enter" &&
       !event.shiftKey
     ) {
-
-
       event.preventDefault();
-
-
       sendMessage();
-
-
     }
-
   }
 );
-
-
 /* =================================================
    قراءة الرد
    ================================================= */
-
 speak.addEventListener(
   "click",
   function() {
-
-
     if (!lastReply) {
-
-
       status.textContent =
         "لا يوجد رد لقراءته";
-
-
       return;
-
     }
-
-
     if (
       !("speechSynthesis" in window)
     ) {
-
-
       status.textContent =
         "الصوت غير متاح";
-
-
       return;
-
     }
-
-
     window.speechSynthesis.cancel();
-
-
     const speech =
       new SpeechSynthesisUtterance(
         lastReply
       );
-
-
     speech.lang =
       "ar-SA";
-
-
     speech.rate =
       0.9;
-
-
     speech.pitch =
       1;
-
-
     window.speechSynthesis.speak(
       speech
     );
-
-
     status.textContent =
       "🔊 يتم تشغيل الرد";
-
-
   }
 );
-
-
 /* =================================================
    إيقاف الصوت
    ================================================= */
-
 stopSpeech.addEventListener(
   "click",
   function() {
-
-
     if (
       "speechSynthesis" in window
     ) {
-
-
       window.speechSynthesis.cancel();
-
-
       status.textContent =
         "تم إيقاف الصوت";
-
-
     }
-
   }
 );
-
-
 /* =================================================
    محادثة جديدة
    ================================================= */
-
 newChat.addEventListener(
   "click",
   function() {
-
-
     const answer =
       confirm(
         "هل تريد بدء محادثة جديدة؟"
       );
-
-
     if (!answer) {
-
       return;
-
     }
-
-
     localStorage.removeItem(
       "voice_assistant_session"
     );
-
-
     sessionId =
       crypto.randomUUID();
-
-
     localStorage.setItem(
       "voice_assistant_session",
       sessionId
     );
-
-
     messages.innerHTML =
       "";
-
-
     const newWelcome =
       document.createElement(
         "div"
       );
-
-
     newWelcome.className =
       "welcome";
-
-
     newWelcome.innerHTML =
       "مرحبًا 👋<br>اضغط 🎤 وتحدث معي";
-
-
     messages.appendChild(
       newWelcome
     );
-
-
     lastReply =
       "";
-
-
     userLatitude =
       null;
-
-
     userLongitude =
       null;
-
-
     userAccuracy =
       null;
-
-
     status.textContent =
       "محادثة جديدة";
-
-
   }
 );
-
-
-/* =================================================
-   إخفاء الترحيب
-   ================================================= */
-
-function hideWelcome() {
-
-
-  if (welcome) {
-
-    welcome.style.display =
-      "none";
-
-  }
-
-}
-
-
 </script>
-
 </body>
-
 </html>
