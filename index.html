@@ -69,9 +69,12 @@
 <div id="text">
   اضغط على الميكروفون وتحدث
 </div>
-
 <button id="send">
   إرسال إلى المساعد
+</button>
+
+<button id="speak">
+  🔊 استمع
 </button>
 
 <div id="status">
@@ -116,6 +119,10 @@ const send =
 
 const status =
   document.getElementById("status");
+  const speak =
+  document.getElementById("speak");
+
+let lastReply = "";
 
 
 /* ==================================================
@@ -404,31 +411,15 @@ if (!reply) {
 
 text.textContent =
   reply;
+      lastReply =
+
+  reply;
 
 
 /* ================================
    قراءة رد المساعد بصوت
    ================================ */
 
-if ("speechSynthesis" in window) {
-
-  window.speechSynthesis.cancel();
-
-  const speech =
-    new SpeechSynthesisUtterance(reply);
-
-  speech.lang =
-    "ar-SA";
-
-  speech.rate =
-    0.9;
-
-  speech.pitch =
-    1;
-
-  window.speechSynthesis.speak(
-    speech
-  );
 
 }
 
@@ -454,3 +445,39 @@ status.textContent =
 
 </body>
 </html>
+speak.addEventListener(
+  "click",
+  function() {
+
+    if (!lastReply) {
+      return;
+    }
+
+    if (!("speechSynthesis" in window)) {
+      status.textContent =
+        "الصوت غير متاح في هذا المتصفح";
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const speech =
+      new SpeechSynthesisUtterance(
+        lastReply
+      );
+
+    speech.lang =
+      "ar-SA";
+
+    speech.rate =
+      0.9;
+
+    speech.pitch =
+      1;
+
+    window.speechSynthesis.speak(
+      speech
+    );
+
+  }
+);
