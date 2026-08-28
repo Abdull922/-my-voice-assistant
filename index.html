@@ -27,23 +27,19 @@
 
   <title>مساعدي AI</title>
 
-
   <style>
 
     * {
       box-sizing: border-box;
     }
 
-
     html,
     body {
 
       margin: 0;
-
       padding: 0;
 
       width: 100%;
-
       height: 100%;
 
       background: #f2f2f7;
@@ -57,39 +53,27 @@
 
     }
 
-
     body {
-
       overflow: hidden;
-
     }
-
 
     .app {
 
       height: 100dvh;
 
       display: flex;
-
       flex-direction: column;
 
       max-width: 700px;
-
       margin: auto;
 
       background: #f2f2f7;
 
     }
 
-
-    /* ============================
-       الرأس
-       ============================ */
-
     header {
 
       background: #111827;
-
       color: white;
 
       padding:
@@ -102,15 +86,12 @@
 
     }
 
-
     header h1 {
 
       margin: 0;
-
       font-size: 21px;
 
     }
-
 
     #status {
 
@@ -121,11 +102,6 @@
       opacity: .7;
 
     }
-
-
-    /* ============================
-       المحادثة
-       ============================ */
 
     #messages {
 
@@ -143,7 +119,6 @@
 
     }
 
-
     .message {
 
       max-width: 85%;
@@ -160,7 +135,6 @@
 
     }
 
-
     .user {
 
       align-self: flex-start;
@@ -172,7 +146,6 @@
       border-bottom-left-radius: 5px;
 
     }
-
 
     .assistant {
 
@@ -189,7 +162,6 @@
 
     }
 
-
     .welcome {
 
       align-self: center;
@@ -203,11 +175,6 @@
       font-size: 14px;
 
     }
-
-
-    /* ============================
-       منطقة الإدخال
-       ============================ */
 
     .composer {
 
@@ -223,7 +190,6 @@
 
     }
 
-
     .input-row {
 
       display: flex;
@@ -233,7 +199,6 @@
       align-items: center;
 
     }
-
 
     #input {
 
@@ -261,13 +226,11 @@
 
     }
 
-
     #input:focus {
 
       border-color: #007aff;
 
     }
-
 
     .icon-button {
 
@@ -291,13 +254,11 @@
 
     }
 
-
     #mic {
 
       background: #007aff;
 
     }
-
 
     #mic.listening {
 
@@ -307,17 +268,13 @@
 
     }
 
-
     @keyframes pulse {
 
       50% {
-
         transform: scale(1.08);
-
       }
 
     }
-
 
     #send {
 
@@ -339,7 +296,6 @@
 
     }
 
-
     .bottom-buttons {
 
       display: flex;
@@ -350,8 +306,9 @@
 
       margin-top: 8px;
 
-    }
+      flex-wrap: wrap;
 
+    }
 
     .small-button {
 
@@ -368,7 +325,6 @@
       font-size: 12px;
 
     }
-
 
     .small-button:active,
     .icon-button:active,
@@ -389,8 +345,6 @@
 <div class="app">
 
 
-  <!-- الرأس -->
-
   <header>
 
     <h1>
@@ -403,8 +357,6 @@
 
   </header>
 
-
-  <!-- المحادثة -->
 
   <main id="messages">
 
@@ -421,9 +373,8 @@
   </main>
 
 
-  <!-- الإدخال -->
-
   <div class="composer">
+
 
     <div class="input-row">
 
@@ -432,7 +383,6 @@
         id="mic"
         class="icon-button"
         type="button"
-        aria-label="الميكروفون"
       >
         🎤
       </button>
@@ -457,6 +407,15 @@
 
 
     <div class="bottom-buttons">
+
+
+      <button
+        id="location"
+        class="small-button"
+        type="button"
+      >
+        📍 موقعي
+      </button>
 
 
       <button
@@ -488,18 +447,18 @@
 
     </div>
 
+
   </div>
 
 
 </div>
 
 
-
 <script>
 
 
 /* =================================================
-   Chat URL من n8n
+   ضع هنا نفس Chat URL الذي يعمل عندك في n8n
    ================================================= */
 
 const N8N_CHAT_URL =
@@ -528,6 +487,9 @@ const stopSpeech =
 const newChat =
   document.getElementById("newChat");
 
+const locationButton =
+  document.getElementById("location");
+
 const messages =
   document.getElementById("messages");
 
@@ -536,6 +498,17 @@ const status =
 
 const welcome =
   document.getElementById("welcome");
+
+
+/* =================================================
+   الموقع
+   ================================================= */
+
+let userLatitude = null;
+
+let userLongitude = null;
+
+let userAccuracy = null;
 
 
 /* =================================================
@@ -595,19 +568,139 @@ function addMessage(
 
 
 /* =================================================
-   إخفاء الترحيب
+   الموقع — زر موقعي
    ================================================= */
 
-function hideWelcome() {
+locationButton.addEventListener(
+  "click",
+  function() {
 
-  if (welcome) {
 
-    welcome.style.display =
-      "none";
+    if (!navigator.geolocation) {
+
+      status.textContent =
+        "الموقع غير متاح في هذا المتصفح";
+
+      return;
+
+    }
+
+
+    status.textContent =
+      "📍 جاري تحديد موقعك...";
+
+
+    navigator.geolocation.getCurrentPosition(
+
+      function(position) {
+
+
+        userLatitude =
+          position.coords.latitude;
+
+
+        userLongitude =
+          position.coords.longitude;
+
+
+        userAccuracy =
+          position.coords.accuracy;
+
+
+        status.textContent =
+          "📍 تم تحديد موقعك";
+
+
+        console.log(
+          "Latitude:",
+          userLatitude
+        );
+
+
+        console.log(
+          "Longitude:",
+          userLongitude
+        );
+
+
+        console.log(
+          "Accuracy:",
+          userAccuracy
+        );
+
+
+      },
+
+
+      function(error) {
+
+
+        console.log(
+          "Location error:",
+          error
+        );
+
+
+        userLatitude =
+          null;
+
+
+        userLongitude =
+          null;
+
+
+        userAccuracy =
+          null;
+
+
+        if (
+          error.code === 1
+        ) {
+
+          status.textContent =
+            "تم رفض إذن الموقع";
+
+        } else if (
+          error.code === 2
+        ) {
+
+          status.textContent =
+            "تعذر تحديد موقعك";
+
+        } else if (
+          error.code === 3
+        ) {
+
+          status.textContent =
+            "انتهى وقت تحديد الموقع";
+
+        } else {
+
+          status.textContent =
+            "حدث خطأ في الموقع";
+
+        }
+
+      },
+
+
+      {
+
+        enableHighAccuracy:
+          true,
+
+        timeout:
+          20000,
+
+        maximumAge:
+          0
+
+      }
+
+    );
 
   }
-
-}
+);
 
 
 /* =================================================
@@ -621,10 +714,14 @@ const SpeechRecognition =
 
 if (!SpeechRecognition) {
 
-  mic.disabled = true;
+
+  mic.disabled =
+    true;
+
 
   status.textContent =
     "التعرف الصوتي غير متاح";
+
 
 } else {
 
@@ -648,18 +745,22 @@ if (!SpeechRecognition) {
   recognition.onstart =
     function() {
 
+
       mic.classList.add(
         "listening"
       );
 
+
       status.textContent =
         "🎙️ أستمع إليك...";
+
 
     };
 
 
   recognition.onresult =
     function(event) {
+
 
       let result = "";
 
@@ -670,8 +771,10 @@ if (!SpeechRecognition) {
         i++
       ) {
 
+
         result +=
           event.results[i][0].transcript;
+
 
       }
 
@@ -679,19 +782,23 @@ if (!SpeechRecognition) {
       input.value =
         result;
 
+
     };
 
 
   recognition.onerror =
     function(event) {
 
+
       mic.classList.remove(
         "listening"
       );
 
+
       status.textContent =
         "خطأ: " +
         event.error;
+
 
     };
 
@@ -699,12 +806,15 @@ if (!SpeechRecognition) {
   recognition.onend =
     function() {
 
+
       mic.classList.remove(
         "listening"
       );
 
+
       status.textContent =
         "جاهز";
+
 
     };
 
@@ -712,6 +822,7 @@ if (!SpeechRecognition) {
   mic.addEventListener(
     "click",
     function() {
+
 
       try {
 
@@ -742,6 +853,22 @@ async function sendMessage() {
 
   if (!message) {
 
+    status.textContent =
+      "لا توجد رسالة";
+
+    return;
+
+  }
+
+
+  if (
+    N8N_CHAT_URL ===
+    "ضع Chat URL هنا"
+  ) {
+
+    status.textContent =
+      "لم يتم وضع Chat URL";
+
     return;
 
   }
@@ -756,24 +883,12 @@ async function sendMessage() {
   );
 
 
-  input.value = "";
+  input.value =
+    "";
 
 
   status.textContent =
-    "جاري التفكير...";
-
-
-  if (
-    N8N_CHAT_URL ===
-    "ضع Chat URL هنا"
-  ) {
-
-    status.textContent =
-      "لم يتم وضع Chat URL";
-
-    return;
-
-  }
+    "جاري الاتصال بالمساعد...";
 
 
   try {
@@ -796,7 +911,9 @@ async function sendMessage() {
         url,
         {
 
-          method: "POST",
+          method:
+            "POST",
+
 
           headers: {
 
@@ -808,6 +925,7 @@ async function sendMessage() {
 
           },
 
+
           body:
             JSON.stringify({
 
@@ -818,7 +936,28 @@ async function sendMessage() {
                 message,
 
               sessionId:
-                sessionId
+                sessionId,
+
+
+              /* ======================
+                 معلومات الموقع
+                 ====================== */
+
+              location:
+                userLatitude !== null
+                  ? {
+
+                      latitude:
+                        userLatitude,
+
+                      longitude:
+                        userLongitude,
+
+                      accuracy:
+                        userAccuracy
+
+                    }
+                  : null
 
             })
 
@@ -840,9 +979,9 @@ async function sendMessage() {
     }
 
 
-    /* =========================================
-       استخراج Streaming Response
-       ========================================= */
+    /* =================================================
+       استخراج رد Streaming
+       ================================================= */
 
     let reply = "";
 
@@ -878,24 +1017,28 @@ async function sendMessage() {
             "string"
         ) {
 
+
           reply +=
             data.content;
+
 
         }
 
 
       } catch(error) {
 
+
         /* تجاهل السطر غير الصالح */
+
 
       }
 
     }
 
 
-    /* =========================================
-       JSON عادي إذا لم يكن Streaming
-       ========================================= */
+    /* =================================================
+       JSON عادي
+       ================================================= */
 
     if (!reply) {
 
@@ -920,6 +1063,7 @@ async function sendMessage() {
 
         reply =
           raw;
+
 
       }
 
@@ -962,7 +1106,7 @@ async function sendMessage() {
 
 
 /* =================================================
-   زر الإرسال
+   إرسال
    ================================================= */
 
 send.addEventListener(
@@ -972,21 +1116,25 @@ send.addEventListener(
 
 
 /* =================================================
-   Enter للإرسال
+   Enter
    ================================================= */
 
 input.addEventListener(
   "keydown",
   function(event) {
 
+
     if (
       event.key === "Enter" &&
       !event.shiftKey
     ) {
 
+
       event.preventDefault();
 
+
       sendMessage();
+
 
     }
 
@@ -995,7 +1143,7 @@ input.addEventListener(
 
 
 /* =================================================
-   قراءة الرد بصوت
+   قراءة الرد
    ================================================= */
 
 speak.addEventListener(
@@ -1005,8 +1153,10 @@ speak.addEventListener(
 
     if (!lastReply) {
 
+
       status.textContent =
         "لا يوجد رد لقراءته";
+
 
       return;
 
@@ -1017,8 +1167,10 @@ speak.addEventListener(
       !("speechSynthesis" in window)
     ) {
 
+
       status.textContent =
         "الصوت غير متاح";
+
 
       return;
 
@@ -1067,14 +1219,18 @@ stopSpeech.addEventListener(
   "click",
   function() {
 
+
     if (
       "speechSynthesis" in window
     ) {
 
+
       window.speechSynthesis.cancel();
+
 
       status.textContent =
         "تم إيقاف الصوت";
+
 
     }
 
@@ -1091,11 +1247,13 @@ newChat.addEventListener(
   function() {
 
 
-    if (
-      !confirm(
+    const answer =
+      confirm(
         "هل تريد بدء محادثة جديدة؟"
-      )
-    ) {
+      );
+
+
+    if (!answer) {
 
       return;
 
@@ -1117,11 +1275,14 @@ newChat.addEventListener(
     );
 
 
-    messages.innerHTML = "";
+    messages.innerHTML =
+      "";
 
 
     const newWelcome =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
 
     newWelcome.className =
@@ -1141,11 +1302,41 @@ newChat.addEventListener(
       "";
 
 
+    userLatitude =
+      null;
+
+
+    userLongitude =
+      null;
+
+
+    userAccuracy =
+      null;
+
+
     status.textContent =
       "محادثة جديدة";
 
+
   }
 );
+
+
+/* =================================================
+   إخفاء الترحيب
+   ================================================= */
+
+function hideWelcome() {
+
+
+  if (welcome) {
+
+    welcome.style.display =
+      "none";
+
+  }
+
+}
 
 
 </script>
